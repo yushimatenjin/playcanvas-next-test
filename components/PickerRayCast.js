@@ -1,5 +1,5 @@
 import pc from "playcanvas";
-const PickerRayCastCreator = () => {
+const PickerRayCastCreator = (func) => {
   var PickerRaycast = pc.createScript("pickerRaycast");
 
   // initialize code called once per entity
@@ -18,15 +18,15 @@ const PickerRayCastCreator = () => {
       e.y,
       this.entity.camera.farClip
     );
-    // console.log(e)
-    // console.log(this.entity)
+    // cosole.log(e)
+    // console.log(this.entity)n
 
     var result = this.app.systems.rigidbody.raycastFirst(from, to);
     console.log(result, "resul")
     if (result) {
       var pickedEntity = result.entity;
       console.log("Entity")
-    //   pickedEntity.script.pulse.pulse();
+      func()
     }
   };
 };

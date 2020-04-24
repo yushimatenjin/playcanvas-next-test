@@ -29,15 +29,16 @@ const Page = () => {
         createRotator();
         OrbitCameraCreator();
         MouseInputCreator();
-        PickerRayCastCreator()
-        console.log(app.script);
+        PickerRayCastCreator(() => {
+          setShowModal(!showModal)
+        })
 
         var camera = new pc.Entity();
         camera.addComponent("camera", {
           clearColor: new pc.Color(0.4, 0.45, 0.5),
-          projection: pc.PROJECTION_ORTHOGRAPHIC,
-          orthoHeight: 3
-  
+          farClip: 100,
+          fov: 65,
+          nearClip: 0.1,
         });
         camera.setPosition(5, 0, 15);
 
@@ -86,7 +87,15 @@ const Page = () => {
   return (
     <>
       <Header />
-      {showModal && <div>Show Modal</div>}
+      {showModal && <div style={{
+        width:"25vw",
+        height:"25vh",
+        position:"absolute",
+        top:"25%",
+        backgroundColor:"white"
+      }} onClick={() => {
+        setShowModal(false)
+      }}>Hide Modal</div>}
       <div
         style={{
           display: "flex",
