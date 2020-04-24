@@ -1,72 +1,100 @@
 import React, { useEffect, useState } from "react";
 import pc from "playcanvas";
 import styled from "styled-components";
-import Canvas from '../components/Canvas'
-import Create from '../utils/create'
-const Types = styled.div`
-  display: "flex";
-`;
-
+import Canvas from "../components/Canvas";
+import Create from "../utils/create";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import createRotator from '../components/Rotator'
 function createMaterial(color) {
   var material = new pc.StandardMaterial();
   material.diffuse = color;
-  material.update()
+  material.update();
 
   return material;
 }
 const Page = () => {
   const [modelType, setModelType] = useState("cone");
-  const [speed, setSpeed] = useState(300);
+  const [speed, setSpeed] = useState(4);
+  const [loaded, setLoaded] = useState(false);
+  const app = require("../components/App").default;
+
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const app = require("../components/App").default
-      const cube = require("../components/Cube").default
-      // create camera entity
-      app.mouse.on(pc.EVENT_MOUSEDOWN, ()=>{
-      })
-      // create directional light entity
-      const light = new pc.Entity("light");
-      light.addComponent("light");
-      var green = createMaterial(new pc.Color(0, 1, 0));
-      var types = [ 'box', 'capsule', 'cone', 'cylinder', 'sphere' ];
-      types.forEach(function (type, idx) {
-          Create(type, green, idx * 2 + 1, 2, 0, app);
-      });
-      // add to hierarchy
-      app.root.addChild(cube);
-      app.root.addChild(light);
-      cube.setPosition(1, 2, 0)
-      light.setEulerAngles(45, 0, 0);
+      if (!loaded) {
+        createRotator()
 
-      var camera = new pc.Entity();
-      camera.addComponent("camera", {
-          clearColor: new pc.Color(0.5, 0.5, 0.8)
-      });
+        app.mouse.on(pc.EVENT_MOUSEDOWN, () => {});
+        var camera = new pc.Entity();
+        camera.addComponent("camera", {
+          clearColor: new pc.Color(0.5, 0.5, 0.8),
+        });
+        app.root.addChild(camera);
+        camera.setPosition(5, 0, 15);
 
-      app.root.addChild(camera);
-      camera.setPosition(5, 0, 15);
+        camera.addComponent('script');
+        camera.script.create('rotator');
 
-
-      app.configure("/config.json", () =>{
-        app.loadScene("/908889.json", function (err, scene) {
-          if (err) {
+        app.configure("/config.json", () => {
+          app.loadScene("/908889.json", function (err, scene) {
+            if (err) {
               console.error(err);
-          }
-  
-          app.on("update", function(deltaTime) {
-            const base = app.root.findByName("base")
-            base.rotate(speed * deltaTime, speed * deltaTime, speed * deltaTime);
+            }
+            setLoaded(true);
           });
-      });
-      })
+        });
 
-
-
+ 
+      }
     }
-  }, [modelType, speed]);
+  }, []);
 
+  useEffect(() => {
+    if (loaded) {
+      app.off("update");
+      const base = app.root.findByName("base");
+
+      app.on("update", function (deltaTime) {
+        base.rotate(speed, speed, speed);
+      });
+    }
+  }, [loaded, speed]);
+  console.log(app);
+  console.log(speed);
   return (
-      <Canvas />
+    <>
+      <Header />
+      <div
+        style={{
+          display: "flex",
+        }}
+      >
+        <div
+          style={{
+            padding: "1rem",
+          }}
+        >
+          <span>SideBar</span>
+          <div
+            onClick={() => {
+              setSpeed(speed * 1.2);
+            }}
+          >
+            SpeedUp
+          </div>
+
+          <div
+            onClick={() => {
+              setSpeed(speed / 1.2);
+            }}
+          >
+            SpeedDown
+          </div>
+        </div>
+        <Canvas />
+      </div>
+      <Footer />
+    </>
   );
 };
 

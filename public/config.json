@@ -193,7 +193,7 @@
                     0.3137254901960784,
                     0.3137254901960784
                 ],
-                "diffuseMap": null,
+                "diffuseMap": 30214408,
                 "diffuseMapChannel": "rgb",
                 "diffuseMapUv": 0,
                 "diffuseMapTiling": [1, 1],
@@ -289,6 +289,53 @@
             "region": "eu-west-1",
             "i18n": {},
             "id": "30214333"
+        },
+        "30214408": {
+            "tags": [],
+            "name": "virtual.jpeg",
+            "revision": 1,
+            "preload": true,
+            "meta": {
+                "compress": {
+                    "alpha": false,
+                    "normals": false,
+                    "dxt": false,
+                    "pvr": false,
+                    "pvrBpp": 4,
+                    "etc1": false,
+                    "etc2": false,
+                    "basis": false,
+                    "quality": 128
+                },
+                "format": "jpeg",
+                "type": "TrueColor",
+                "width": 1024,
+                "height": 512,
+                "alpha": false,
+                "depth": 8,
+                "srgb": true,
+                "interlaced": false
+            },
+            "data": {
+                "addressu": "repeat",
+                "addressv": "repeat",
+                "minfilter": "linear_mip_linear",
+                "magfilter": "linear",
+                "anisotropy": 1,
+                "rgbm": false,
+                "mipmaps": true
+            },
+            "type": "texture",
+            "file": {
+                "filename": "virtual.jpeg",
+                "hash": "70e82507456ffd101e7370cf106170a6",
+                "size": 149133,
+                "variants": {},
+                "url": "files/assets/30214408/1/virtual.jpeg"
+            },
+            "region": "eu-west-1",
+            "i18n": {},
+            "id": "30214408"
         }
     }
 }
