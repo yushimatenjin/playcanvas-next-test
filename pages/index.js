@@ -6,14 +6,6 @@ import Create from '../utils/create'
 const Types = styled.div`
   display: "flex";
 `;
-const ModelType = styled.span`
-  margin: 5px;
-  border: 4px solid #333;
-  :hover {
-    font-size: 1.5rem;
-  }
-`;
-
 
 function createMaterial(color) {
   var material = new pc.StandardMaterial();
@@ -54,10 +46,22 @@ const Page = () => {
       app.root.addChild(camera);
       camera.setPosition(5, 0, 15);
 
-      // register a global update event
-      app.on("update", function(deltaTime) {
-        cube.rotate(speed * deltaTime, speed * deltaTime, speed * deltaTime);
+
+      app.configure("/config.json", () =>{
+        app.loadScene("/908889.json", function (err, scene) {
+          if (err) {
+              console.error(err);
+          }
+  
+          app.on("update", function(deltaTime) {
+            const base = app.root.findByName("base")
+            base.rotate(speed * deltaTime, speed * deltaTime, speed * deltaTime);
+          });
       });
+      })
+
+
+
     }
   }, [modelType, speed]);
 
