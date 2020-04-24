@@ -5,7 +5,11 @@ import Canvas from "../components/Canvas";
 import Create from "../utils/create";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import createRotator from '../components/Rotator'
+import createRotator from "../components/Rotator";
+import MouseInputCreator from "../components/MouseInput";
+import OrbitCameraCreator from "../components/OrbitCamera";
+import PickerRayCastCreator from "../components/PickerRayCast";
+import LoadModule from '../utils/loadModule'
 function createMaterial(color) {
   var material = new pc.StandardMaterial();
   material.diffuse = color;
@@ -14,37 +18,54 @@ function createMaterial(color) {
   return material;
 }
 const Page = () => {
-  const [modelType, setModelType] = useState("cone");
-  const [speed, setSpeed] = useState(4);
+  const [showModal, setShowModal] = useState(false);
+  const [speed, setSpeed] = useState(0.2);
   const [loaded, setLoaded] = useState(false);
   const app = require("../components/App").default;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       if (!loaded) {
-        createRotator()
+        createRotator();
+        OrbitCameraCreator();
+        MouseInputCreator();
+        PickerRayCastCreator()
+        console.log(app.script);
 
-        app.mouse.on(pc.EVENT_MOUSEDOWN, () => {});
         var camera = new pc.Entity();
         camera.addComponent("camera", {
-          clearColor: new pc.Color(0.5, 0.5, 0.8),
+          clearColor: new pc.Color(0.4, 0.45, 0.5),
+          projection: pc.PROJECTION_ORTHOGRAPHIC,
+          orthoHeight: 3
+  
         });
-        app.root.addChild(camera);
         camera.setPosition(5, 0, 15);
 
-        camera.addComponent('script');
-        camera.script.create('rotator');
-
-        app.configure("/config.json", () => {
-          app.loadScene("/908889.json", function (err, scene) {
-            if (err) {
-              console.error(err);
-            }
-            setLoaded(true);
-          });
+        camera.addComponent("script");
+        camera.script.create("orbitCamera", {
+          attributes: {
+            inertiaFactor: 0.2, // Override default of 0 (no inertia)
+          },
         });
-
- 
+        camera.script.create("orbitCameraInputMouse");
+        camera.script.create("orbitCameraInputTouch");
+        camera.script.create("pickerRaycast")
+        app.root.addChild(camera);
+        const PRELOAD_MODULES = [
+          {'moduleName' : 'Ammo', 'glueUrl' : 'files/assets/30215644/1/ammo.wasm.js', 'wasmUrl' : 'files/assets/30215642/1/ammo.wasm.wasm', 'fallbackUrl' : 'files/assets/30215643/1/ammo.js', 'preload' : true},
+      ];
+      const ASSET_PREFIX = "";
+        LoadModule(PRELOAD_MODULES, ASSET_PREFIX, () => {
+          app.configure("/config.json", () => {
+            app.loadScene("/908889.json", function (err, scene) {
+              if (err) {
+                console.error(err);
+              }
+              setLoaded(true);
+            });
+          });
+        })
+       
       }
     }
   }, []);
@@ -57,13 +78,15 @@ const Page = () => {
       app.on("update", function (deltaTime) {
         base.rotate(speed, speed, speed);
       });
+      app.mouse.on(pc.EVENT_MOUSEDOWN, () => {
+      });
     }
-  }, [loaded, speed]);
-  console.log(app);
-  console.log(speed);
+  }, [loaded, speed,showModal]);
+
   return (
     <>
       <Header />
+      {showModal && <div>Show Modal</div>}
       <div
         style={{
           display: "flex",
@@ -74,22 +97,28 @@ const Page = () => {
             padding: "1rem",
           }}
         >
-          <span>SideBar</span>
-          <div
+          <button
+            onClick={() => {
+              setShowModal(!showModal);
+            }}
+          >
+            toggle modal
+          </button>
+          <button
             onClick={() => {
               setSpeed(speed * 1.2);
             }}
           >
             SpeedUp
-          </div>
+          </button>
 
-          <div
+          <button
             onClick={() => {
               setSpeed(speed / 1.2);
             }}
           >
             SpeedDown
-          </div>
+          </button>
         </div>
         <Canvas />
       </div>

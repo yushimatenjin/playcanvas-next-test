@@ -2,7 +2,7 @@ import React from 'react'
 
 const Header  = () =>{
     return <h1>
-        Header
+        オービットカメラ　検証
     </h1>
 }
 
